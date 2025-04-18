@@ -85,7 +85,11 @@ function submitPost(e) {
     .then(data => {
       console.log('Form successfully submitted.');
       console.log(data);
-      msg.innerText = `Form submitted! Response data: ${data.id}`;
+      msg.innerHTML = `Form submitted! <br />
+      Post Title: ${data.title} <br />
+      Post Body: ${data.body} <br />
+      Post ID: ${data.id} <br />
+      `;
     })
     .catch(err => {
       console.error('Error submitting data:', err);
