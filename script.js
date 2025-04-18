@@ -3,11 +3,15 @@ const xhrBtn = document.querySelector('#xhr-btn');
 const form = document.querySelector('form');
 const titleInput = document.querySelector('#post-title');
 const bodyInput = document.querySelector('#post-body');
+const idInput = document.querySelector('#post-id');
+const submitBtn = document.querySelector('#submit-btn');
+const updateBtn = document.querySelector('#update-btn');
 const msg = document.querySelector('#form-msg');
 
 fetchBtn.addEventListener('click', fetchData);
 xhrBtn.addEventListener('click', fetchDataXHR);
-form.addEventListener('submit', submitPost);
+submitBtn.addEventListener('click', submitPost);
+updateBtn.addEventListener('click', updatePost);
 
 function fetchData() {
   fetch('https://jsonplaceholder.typicode.com/posts/1')
@@ -95,4 +99,39 @@ function submitPost(e) {
       console.error('Error submitting data:', err);
       msg.innerText = `Error submitting the form!`;
     });
+}
+
+function updatePost(e) {
+  e.preventDefault();
+  const title = document.forms[0]['post-title'].value;
+  const body = document.forms[0]['post-body'].value;
+  const id = document.forms[0]['post-id'].value;
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('PUT', `https://jsonplaceholder.typicode.com/posts/${id}`, true);
+  xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        console.log('Post successfully updated.');
+        console.log(data);
+        msg.innerHTML = `Post Updated! <br />
+          Post ID: ${data.id} <br />
+          Title: ${data.title} <br />
+          Body: ${data.body}`;
+      } else {
+        console.error('Error updating post:', xhr.statusText);
+        msg.innerText = 'Error updating the post!';
+      }
+    }
+  };
+  xhr.send(
+    JSON.stringify({
+      title,
+      body,
+      id,
+    })
+  );
 }
